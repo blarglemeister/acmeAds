@@ -6,8 +6,9 @@ import java.util.List;
 public class Newspaper
 {
 
+	private Long id;
 	private String name;
-	private List<Advertisement> ads;
+	private List<TextAd> ads;
 
 	public Newspaper()
 	{
@@ -20,7 +21,17 @@ public class Newspaper
 		ads = new ArrayList<>();
 	}
 
-	public void addAd(Advertisement ad)
+	public Long getId()
+	{
+		return id;
+	}
+
+	public void setId(Long id)
+	{
+		this.id = id;
+	}
+
+	public void addAd(TextAd ad)
 	{
 		if (getAds() == null)
 		{
@@ -39,12 +50,12 @@ public class Newspaper
 		this.name = name;
 	}
 
-	public List<Advertisement> getAds()
+	public List<TextAd> getAds()
 	{
 		return ads;
 	}
 
-	public void setAds(List<Advertisement> ads)
+	public void setAds(List<TextAd> ads)
 	{
 		this.ads = ads;
 	}

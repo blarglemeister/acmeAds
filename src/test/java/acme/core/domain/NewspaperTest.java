@@ -21,14 +21,11 @@ public class NewspaperTest
 	public void testAddAd()
 	{
 		TextAd textAd = new TextAd();
-		ImageAd imageAd = new ImageAd();
 		
 		sut.addAd(textAd);
-		sut.addAd(imageAd);
 		
-		Assert.assertEquals(2, sut.getAds().size());
+		Assert.assertEquals(1, sut.getAds().size());
 		Assert.assertTrue(sut.getAds().contains(textAd));
-		Assert.assertTrue(sut.getAds().contains(imageAd));
 	}
 	
 	@Test
