@@ -2,23 +2,31 @@ package acme.core.domain;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Newspaper
 {
 
 	private Long id;
 	private String name;
-	private List<TextAd> ads;
+	private List<Advertisement> ads;
 
-	public Newspaper()
+	@Override
+	public boolean equals(Object o)
 	{
-		this("");
+		if (o == null || !(o instanceof Newspaper))
+		{
+			return false;
+		}
+		Newspaper n = (Newspaper) o;
+		return Objects.equals(id, n.id) && Objects.equals(name, n.name)
+				&& Objects.equals(ads, n.ads);
 	}
 
-	public Newspaper(String newspaperName)
+	@Override
+	public int hashCode()
 	{
-		name = newspaperName;
-		ads = new ArrayList<>();
+		return Objects.hash(id, name, ads);
 	}
 
 	public Long getId()
@@ -31,7 +39,7 @@ public class Newspaper
 		this.id = id;
 	}
 
-	public void addAd(TextAd ad)
+	public void addAd(Advertisement ad)
 	{
 		if (getAds() == null)
 		{
@@ -50,12 +58,12 @@ public class Newspaper
 		this.name = name;
 	}
 
-	public List<TextAd> getAds()
+	public List<Advertisement> getAds()
 	{
 		return ads;
 	}
 
-	public void setAds(List<TextAd> ads)
+	public void setAds(List<Advertisement> ads)
 	{
 		this.ads = ads;
 	}

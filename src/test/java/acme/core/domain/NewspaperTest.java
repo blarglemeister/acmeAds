@@ -20,7 +20,7 @@ public class NewspaperTest
 	@Test
 	public void testAddAd()
 	{
-		TextAd textAd = new TextAd();
+		Advertisement textAd = new Advertisement();
 		
 		sut.addAd(textAd);
 		
@@ -31,7 +31,7 @@ public class NewspaperTest
 	@Test
 	public void testSetters()
 	{
-		TextAd ad = new TextAd();
+		Advertisement ad = new Advertisement();
 		String name = "Newspaper";
 
 		sut.setAds(Arrays.asList(ad));

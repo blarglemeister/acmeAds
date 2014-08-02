@@ -4,22 +4,18 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
-import org.springframework.jdbc.core.ResultSetExtractor;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import acme.core.domain.Newspaper;
-import acme.core.domain.TextAd;
 
 @Component
 public class JdbcNewspaperDAO implements NewspaperDAO
@@ -29,7 +25,8 @@ public class JdbcNewspaperDAO implements NewspaperDAO
 	private JdbcTemplate jdbcTemplate;
 
 	@Override
-	public void store(Newspaper newspaper)
+	@Transactional
+	public int create(Newspaper newspaper)
 	{
 		String newspaperInsert = "INSERT INTO newspaper(name) VALUES(?)";
 		KeyHolder holder = new GeneratedKeyHolder();
@@ -48,81 +45,60 @@ public class JdbcNewspaperDAO implements NewspaperDAO
 
 		}, holder);
 
-		newspaper.setId(holder.getKey().longValue());
+		return holder.getKey().intValue();
 
-		if (newspaper.getAds() != null)
-		{
-			String adInsert = "INSERT INTO ad(title, body) VALUES(?, ?)";
-			String linkInsert = "INSERT INTO paper_ad_links(paper_id, ad_id) VALUES(?, ?)";
-
-			for (TextAd ad : newspaper.getAds())
-			{
-				jdbcTemplate.update(new PreparedStatementCreator() {
-
-					@Override
-					public PreparedStatement createPreparedStatement(
-							Connection connection) throws SQLException
-					{
-						PreparedStatement ps = connection.prepareStatement(
-								adInsert, new String[] { "id" });
-						ps.setString(1, ad.getTitle());
-						ps.setString(2, ad.getAdText());
-
-						return ps;
-					}
-
-				});
-
-				ad.setId(holder.getKey().longValue());
-
-				jdbcTemplate.update(linkInsert, newspaper.getId(), ad.getId());
-			}
-		}
 	}
 
 	@Override
-	public Newspaper getNewspaper(int id)
+	@Transactional
+	public void update(Newspaper newspaper)
 	{
-		String sqlStatement = "SELECT n.id, n.name, a.id, a.title, a.body "
-				+ "FROM ad as a, newspaper as n, paper_ad_links as l "
-				+ "WHERE ? = l.paper_id and l.ad_id = a.id";
-		jdbcTemplate.query(sqlStatement, new NewspaperExtractor(), id);
-		return null;
+		String newspaperUpdate = "UPDATE newspaper set name = ? WHERE id = ?";
+		jdbcTemplate.update(newspaperUpdate, newspaper.getName(), newspaper.getId());
 	}
 
-	private class NewspaperExtractor implements
-			ResultSetExtractor<List<Newspaper>>
+	@Override
+	@Transactional(readOnly = true)
+	public Newspaper getNewspaper(long id)
 	{
+		String sqlStatement = "SELECT id, name FROM newspaper WHERE id = ?";
+		List<Newspaper> result = jdbcTemplate.query(new PreparedStatementCreator() {
 
-		@Override
-		public List<Newspaper> extractData(ResultSet rs) throws SQLException,
-				DataAccessException
-		{
-			Newspaper newspaper = null;
-			Map<Long, Newspaper> paperMap = new HashMap<>();
-
-			while (rs.next())
+			@Override
+			public PreparedStatement createPreparedStatement(
+					Connection connection) throws SQLException
 			{
-				Long id = rs.getLong("n.id");
-				newspaper = paperMap.get(id);
-
-				if (newspaper == null)
-				{
-					newspaper = new Newspaper();
-					newspaper.setId(id);
-					newspaper.setName(rs.getString("n.name"));
-					paperMap.put(id, newspaper);
-				}
-
-				TextAd ad = new TextAd();
-				ad.setId(rs.getLong("a.id"));
-				ad.setTitle(rs.getString("a.title"));
-				ad.setAdText("a.body");
-				newspaper.addAd(ad);
+				PreparedStatement ps = connection
+						.prepareStatement(sqlStatement);
+				ps.setLong(1, id);
+				return ps;
 			}
-			return new ArrayList<Newspaper>(paperMap.values());
-		}
 
+		}, new NewspaperRowMapper());
+		
+		//Id is unique, should never have a result set larger than 1
+		return result.get(0);
+	}
+
+	@Override
+	public List<Newspaper> getNewspapers()
+	{
+		String sqlStatement = "SELECT id, name FROM newspaper";
+		List<Newspaper> result;
+		result = jdbcTemplate.query(sqlStatement, new NewspaperRowMapper());
+		return result;
+	}
+
+	private class NewspaperRowMapper implements RowMapper<Newspaper>
+	{
+		@Override
+		public Newspaper mapRow(ResultSet rs, int rowNum) throws SQLException
+		{
+			Newspaper newspaper = new Newspaper();
+			newspaper.setId(rs.getLong(1));
+			newspaper.setName(rs.getString(2));
+			return newspaper;
+		}
 	}
 
 }
