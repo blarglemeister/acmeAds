@@ -19,7 +19,7 @@ public interface NewspaperDAO
 	 *            Newspaper entry to add.
 	 * @return ID of the created newspaper entry.
 	 */
-	public int create(Newspaper newspaper);
+	public Long create(Newspaper newspaper);
 
 	/**
 	 * Make a modification to a newspaper entry in the database.

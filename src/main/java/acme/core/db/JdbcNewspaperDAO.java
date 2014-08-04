@@ -26,7 +26,7 @@ public class JdbcNewspaperDAO implements NewspaperDAO
 
 	@Override
 	@Transactional
-	public int create(Newspaper newspaper)
+	public Long create(Newspaper newspaper)
 	{
 		String newspaperInsert = "INSERT INTO newspaper(name) VALUES(?)";
 		KeyHolder holder = new GeneratedKeyHolder();
@@ -45,7 +45,7 @@ public class JdbcNewspaperDAO implements NewspaperDAO
 
 		}, holder);
 
-		return holder.getKey().intValue();
+		return holder.getKey().longValue();
 
 	}
 
@@ -54,7 +54,8 @@ public class JdbcNewspaperDAO implements NewspaperDAO
 	public void update(Newspaper newspaper)
 	{
 		String newspaperUpdate = "UPDATE newspaper set name = ? WHERE id = ?";
-		jdbcTemplate.update(newspaperUpdate, newspaper.getName(), newspaper.getId());
+		jdbcTemplate.update(newspaperUpdate, newspaper.getName(),
+				newspaper.getId());
 	}
 
 	@Override
@@ -62,21 +63,22 @@ public class JdbcNewspaperDAO implements NewspaperDAO
 	public Newspaper getNewspaper(long id)
 	{
 		String sqlStatement = "SELECT id, name FROM newspaper WHERE id = ?";
-		List<Newspaper> result = jdbcTemplate.query(new PreparedStatementCreator() {
+		List<Newspaper> result = jdbcTemplate.query(
+				new PreparedStatementCreator() {
 
-			@Override
-			public PreparedStatement createPreparedStatement(
-					Connection connection) throws SQLException
-			{
-				PreparedStatement ps = connection
-						.prepareStatement(sqlStatement);
-				ps.setLong(1, id);
-				return ps;
-			}
+					@Override
+					public PreparedStatement createPreparedStatement(
+							Connection connection) throws SQLException
+					{
+						PreparedStatement ps = connection
+								.prepareStatement(sqlStatement);
+						ps.setLong(1, id);
+						return ps;
+					}
 
-		}, new NewspaperRowMapper());
-		
-		//Id is unique, should never have a result set larger than 1
+				}, new NewspaperRowMapper());
+
+		// Id is unique, should never have a result set larger than 1
 		return result.get(0);
 	}
 
