@@ -9,8 +9,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 import acme.core.domain.Advertisement;
 import acme.core.domain.Newspaper;
@@ -29,13 +27,11 @@ public class NewspaperQueryController
 	AdvertisementService adService;
 
 	@RequestMapping(method = RequestMethod.GET)
-	@ResponseStatus(HttpStatus.OK)
-	@ResponseBody
-	public List<Newspaper> requestAllNewspapers()
+	public ResponseEntity<List<Newspaper>> requestAllNewspapers()
 	{
 		List<Newspaper> newspapers = newspaperService.requestAllNewspapers();
 
-		return newspapers;
+		return new ResponseEntity<List<Newspaper>>(newspapers, HttpStatus.OK);
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/{id}")
