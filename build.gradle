@@ -1,21 +1,30 @@
 apply plugin: 'java'
+apply plugin: 'war'
 apply plugin: 'eclipse'
+apply plugin: 'eclipse-wtp'
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
+    
     compile     'org.springframework:spring-jdbc:4.+', 
                 'org.springframework:spring-context:4.+',
                 'org.springframework:spring-web:4.+',
                 'org.springframework:spring-webmvc:4.+',
                 'com.jayway.jsonpath:json-path:0.8.1'
+                
     runtime     'org.postgresql:postgresql:9.3-1100-jdbc41',
                 'com.fasterxml.jackson.core:jackson-core:2.2.2',
-                'com.fasterxml.jackson.core:jackson-databind:2.2.2'
+                'com.fasterxml.jackson.core:jackson-databind:2.2.2',
+                'org.springframework:spring-web:4.+',
+                'org.springframework:spring-webmvc:4.+'
+                
     testCompile 'org.mockito:mockito-core:1.8.5', 
                 'junit:junit:4.11',
                 'org.springframework:spring-test:4.+',
                 'org.hamcrest:hamcrest-all:1.+'
+                
+    testRuntime 'org.springframework:spring-webmvc:4.+'
 }

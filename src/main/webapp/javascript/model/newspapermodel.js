@@ -1,7 +1,7 @@
 
 window.Newspaper = Backbone.RelationalModel.extend({
 	
-	urlRoot:"api/newspapers",
+	urlRoot:"/api/newspapers",
 	defaults: {
 		"id": null,
 		"name": "",
@@ -22,9 +22,7 @@ window.Newspaper = Backbone.RelationalModel.extend({
 });
 
 window.NewspaperCollection = Backbone.Collection.extend({
-	
-	model:Newspaper
-	url:"api/newspapers"
-	
+	model:Newspaper,
+	url:"/api/newspapers"
 });
 

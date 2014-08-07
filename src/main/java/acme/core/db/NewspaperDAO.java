@@ -36,7 +36,7 @@ public interface NewspaperDAO
 	 *            Unique identifier for the newspaper to retrieve.
 	 * @return Newspaper identified by the given ID.
 	 */
-	public Newspaper getNewspaper(long id);
+	public Newspaper getNewspaper(Long id);
 
 	/**
 	 * Retrieve all newspaper entries stored in the database, without ads populated.

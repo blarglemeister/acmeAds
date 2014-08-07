@@ -14,7 +14,7 @@ import acme.core.domain.Newspaper;
 import acme.core.service.AdvertisementService;
 import acme.core.service.NewspaperService;
 
-@Controller
+/*@Controller
 @RequestMapping("/api/newspapers")
 public class NewspaperCommandController
 {
@@ -40,4 +40,4 @@ public class NewspaperCommandController
 		return new ResponseEntity<Newspaper>(newspaper, headers, HttpStatus.CREATED);
 	}
 
-}
+}*/

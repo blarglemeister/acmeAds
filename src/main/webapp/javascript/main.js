@@ -48,7 +48,7 @@ var AppRouter = Backbone.Router.extend({
         if (this.newspaperList) {
             if (callback) callback();
         } else {
-            this.newspaperList = new newspaperCollection();
+            this.newspaperList = new NewspaperCollection();
        		this.newspaperList.fetch({success: function() {
                $('#sidebar').html( new NewspaperListView({model: app.newspaperList}).render().el );
                if (callback) callback();

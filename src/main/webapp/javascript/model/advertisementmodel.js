@@ -1,7 +1,7 @@
 
 window.Advertisement = Backbone.Model.extend({
 	
-	urlRoot:"api/newspapers/{id}",
+	urlRoot:"/api/newspapers/{id}/ads",
 	defaults: {
 		"id": null,
 		"title": "",

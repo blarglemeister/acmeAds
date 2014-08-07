@@ -15,7 +15,7 @@ import acme.core.domain.Advertisement;
 import acme.core.service.AdvertisementService;
 
 @Controller
-@RequestMapping("/api/newspapers/{id}")
+@RequestMapping("/api/newspapers/{id}/ads")
 public class AdvertisementCommandController
 {
 

@@ -1,5 +1,5 @@
 
-window.WineView = Backbone.View.extend({
+window.NewspaperView = Backbone.View.extend({
 
 
     initialize: function() {

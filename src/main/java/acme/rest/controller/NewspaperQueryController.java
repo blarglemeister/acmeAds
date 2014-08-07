@@ -3,12 +3,17 @@ package acme.rest.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import acme.core.domain.Advertisement;
 import acme.core.domain.Newspaper;
@@ -26,12 +31,14 @@ public class NewspaperQueryController
 	@Autowired
 	AdvertisementService adService;
 
+	@ResponseBody	
+	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(method = RequestMethod.GET)
-	public ResponseEntity<List<Newspaper>> requestAllNewspapers()
+	public List<Newspaper> requestAllNewspapers()
 	{
 		List<Newspaper> newspapers = newspaperService.requestAllNewspapers();
 
-		return new ResponseEntity<List<Newspaper>>(newspapers, HttpStatus.OK);
+		return newspapers;
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/{id}")
@@ -52,5 +59,20 @@ public class NewspaperQueryController
 		paper.setAds(ads);
 
 		return new ResponseEntity<Newspaper>(paper, HttpStatus.OK);
+	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ResponseEntity<Newspaper> createNewspaper(
+			@RequestBody Newspaper newspaper, UriComponentsBuilder builder)
+	{
+
+		Long paperId = newspaperService.createNewspaper(newspaper);
+		newspaper.setId(paperId);
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.setLocation(builder.path("/api/newspapers/{id}")
+				.buildAndExpand(paperId.toString()).toUri());
+
+		return new ResponseEntity<Newspaper>(newspaper, headers, HttpStatus.CREATED);
 	}
 }

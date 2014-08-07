@@ -60,7 +60,7 @@ public class JdbcNewspaperDAO implements NewspaperDAO
 
 	@Override
 	@Transactional(readOnly = true)
-	public Newspaper getNewspaper(long id)
+	public Newspaper getNewspaper(Long id)
 	{
 		String sqlStatement = "SELECT id, name FROM newspaper WHERE id = ?";
 		List<Newspaper> result = jdbcTemplate.query(
@@ -77,6 +77,11 @@ public class JdbcNewspaperDAO implements NewspaperDAO
 					}
 
 				}, new NewspaperRowMapper());
+
+		if (result == null || result.isEmpty())
+		{
+			return null;
+		}
 
 		// Id is unique, should never have a result set larger than 1
 		return result.get(0);
