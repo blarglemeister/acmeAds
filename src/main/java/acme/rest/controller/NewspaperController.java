@@ -22,7 +22,7 @@ import acme.core.service.NewspaperService;
 
 @Controller
 @RequestMapping("/api/newspapers")
-public class NewspaperQueryController
+public class NewspaperController
 {
 
 	@Autowired

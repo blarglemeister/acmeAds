@@ -58,7 +58,7 @@ public class AdvertisementCommandControllerTest
 
 		this.mockMvc
 				.perform(
-						post("/api/newspapers/" + paperId)
+						post("/api/newspapers/" + paperId + "/ads")
 								.content(
 										ControllerTestData.standardAdJSON(
 												testId, paperId))
@@ -73,7 +73,7 @@ public class AdvertisementCommandControllerTest
 
 		this.mockMvc
 				.perform(
-						post("/api/newspapers/" + paperId)
+						post("/api/newspapers/" + paperId + "/ads")
 								.content(
 										ControllerTestData
 												.standardAdJSON(testId, paperId))
@@ -93,7 +93,7 @@ public class AdvertisementCommandControllerTest
 	{
 
 		this.mockMvc.perform(
-				post("/api/newspapers/" + paperId)
+				post("/api/newspapers/" + paperId + "/ads")
 						.content(
 								ControllerTestData
 										.standardAdJSON(testId, paperId))

@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import acme.core.domain.Newspaper;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({ "classpath:spring-application.xml" })
+@ContextConfiguration({ "classpath:dispatcher-servlet.xml" })
 @Transactional
 public class NewspaperDAOTest
 {

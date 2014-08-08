@@ -1,8 +1,12 @@
 package acme.rest.controller;
 
 import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -19,16 +23,17 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import acme.core.domain.Newspaper;
 import acme.core.service.AdvertisementService;
 import acme.core.service.NewspaperService;
 
-public class NewspaperQueryControllerTest
+public class NewspaperControllerTest
 {
 
 	private MockMvc mockMvc;
 
 	@InjectMocks
-	private NewspaperQueryController sut;
+	private NewspaperController sut;
 
 	@Mock
 	private NewspaperService paperService;
@@ -41,7 +46,7 @@ public class NewspaperQueryControllerTest
 	@Before
 	public void setup()
 	{
-		sut = new NewspaperQueryController();
+		sut = new NewspaperController();
 
 		MockitoAnnotations.initMocks(this);
 
@@ -49,6 +54,9 @@ public class NewspaperQueryControllerTest
 				.standaloneSetup(sut)
 				.setMessageConverters(new MappingJackson2HttpMessageConverter())
 				.build();
+		
+		when(paperService.createNewspaper(any(Newspaper.class))).thenReturn(
+				testId);
 
 	}
 
@@ -124,4 +132,52 @@ public class NewspaperQueryControllerTest
 				.andExpect(jsonPath("$", hasSize(1)));
 	}
 
+	
+	@Test
+	public void testCreateNewspaperUsesHttpCreated() throws Exception
+	{
+
+		this.mockMvc
+				.perform(
+						post("/api/newspapers")
+								.content(
+										ControllerTestData
+												.standardNewspaperJSON(testId))
+								.contentType(MediaType.APPLICATION_JSON)
+								.accept(MediaType.APPLICATION_JSON))
+				.andDo(print()).andExpect(status().isCreated());
+	}
+
+	@Test
+	public void testCreateNewspaperRendersAsJson() throws Exception
+	{
+
+		this.mockMvc
+				.perform(
+						post("/api/newspapers")
+								.content(
+										ControllerTestData
+												.standardNewspaperJSON(testId))
+								.contentType(MediaType.APPLICATION_JSON)
+								.accept(MediaType.APPLICATION_JSON))
+				.andExpect(
+						jsonPath("$.name").value(ControllerTestData.PAPER_NAME))
+				.andExpect(jsonPath("$.id").value(testId.intValue()));
+
+	}
+
+	@Test
+	public void testCreateNewspaperPassesLocationHeader() throws Exception
+	{
+
+		this.mockMvc.perform(
+				post("/api/newspapers")
+						.content(
+								ControllerTestData
+										.standardNewspaperJSON(testId))
+						.contentType(MediaType.APPLICATION_JSON)
+						.accept(MediaType.APPLICATION_JSON)).andExpect(
+				header().string("Location",
+						"http://localhost/api/newspapers/" + testId));
+	}
 }
